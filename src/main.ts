@@ -3,18 +3,31 @@ import { Mongo } from "./mongo.js"
 import http from "http"
 import { getBody } from "./utils/get-body.js"
 import { StartProduce } from "./validator/start-profuce.js"
+import { getEnv } from '@fullstacksjs/toolbox';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 console.log("CDC started.")
 
+const uri: string = getEnv('MONGO_CONNECTION_STRING', 'mongodb://127.0.0.1:27017,127.0.0.1:27018');
+const client = await Mongo(uri)
 
-const client = await Mongo()
 
-// ----- server -----
+const host = getEnv('SERVER_HOST', 'localhost')
+const port = parseInt(getEnv(process.env.SERVER_PORT,'3030') , 10)
+const autoProduce = JSON.parse(getEnv('AUTO_PRODUCE', 'false'))
 
-const host = 'localhost'  // TODO: read from env
-const port = 3030         // TODO: read from env
 const cdc = new Cdc(client)
 let cdcAlreadyCreated: boolean = false
+
+if (autoProduce) {
+  cdc.startProduceChanges({fullDocument: "updateLookup"})
+  cdcAlreadyCreated = true
+  console.log('Automatic production has been started.')
+}
+
+// ----- server -----
 
 const requestListener = async function (req, res) {
   res.setHeader("Content-Type", "application/json");
@@ -31,6 +44,7 @@ const requestListener = async function (req, res) {
       case "/stop-producer":
         // eslint-disable-next-line no-case-declarations
         const result = await cdc.stopProduceChanges()
+        cdcAlreadyCreated = false
         res.writeHead(200);
         res.end(`{"message": "CDC stopped", "result": ${result}}`);
         break

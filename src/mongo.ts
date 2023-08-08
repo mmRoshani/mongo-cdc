@@ -1,7 +1,6 @@
 import { Collection, Document, MongoClient } from 'mongodb'
 
-export async function Mongo(): Promise<Collection<Document> | MongoClient>{
-    const url = 'mongodb://127.0.0.1:27117,127.0.0.1:27118';
+export async function Mongo(url: string): Promise<Collection<Document> | MongoClient>{
     const client = new MongoClient(url)
     
     console.log('Connecting to server...');

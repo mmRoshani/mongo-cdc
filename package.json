@@ -1,10 +1,10 @@
 {
   "name": "mongo cdc",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "MongoDB CDC producer",
   "type": "module",
   "engines": {
-    "node": ">= 18.12 <19"
+    "node": ">= 17.4.0 <19"
   },
   "devDependencies": {
     "@types/jest": "~29.5",
@@ -22,8 +22,8 @@
     "typescript": "~5.1"
   },
   "scripts": {
-    "start": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
+    "start": "node build/src/main.js",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
@@ -36,7 +36,11 @@
   "author": "MohammadMojtabaRoshani <mohammadmojtabaroshani@outlook.com> ",
   "license": "Apache-2.0",
   "dependencies": {
+    "@fullstacksjs/toolbox": "^3.3.0",
+    "dotenv": "^16.3.1",
+    "lodash": "^4.17.21",
     "mongodb": "^5.7.0",
+    "mqtt": "^5.0.2",
     "tslib": "~2.6"
   }
 }
